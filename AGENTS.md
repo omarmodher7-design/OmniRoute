@@ -48,20 +48,20 @@ Repository map and Reference Documentation sections below.
 
 **OmniRoute** — unified AI proxy/router. One endpoint, 343 LLM providers, auto-fallback.
 
-| Layer         | Location                | Purpose                                                                                                                                                                   |
-| ------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| API Routes    | `src/app/api/v1/`       | Next.js App Router — entry points                                                                                                                                         |
-| Handlers      | `open-sse/handlers/`    | Request processing (chat, embeddings, etc)                                                                                                                                |
-| Executors     | `open-sse/executors/`   | Provider-specific HTTP dispatch                                                                                                                                           |
-| Translators   | `open-sse/translator/`  | Format conversion (OpenAI↔Claude↔Gemini)                                                                                                                                  |
-| Transformer   | `open-sse/transformer/` | Responses API ↔ Chat Completions                                                                                                                                          |
-| Services      | `open-sse/services/`    | Combo routing, rate limits, caching, etc                                                                                                                                  |
-| Database      | `src/lib/db/`           | SQLite domain modules (154 migrations)                                                                                                                                    |
-| Domain/Policy | `src/domain/`           | Policy engine, cost rules, fallback logic                                                                                                                                 |
-| MCP Server    | `open-sse/mcp-server/`  | 109 tools (44 canonical + memory/skill/GitHub/pool/gamification/plugin/Notion/Obsidian/local-corpus/RTK modules), 3 transports (stdio / SSE / Streamable HTTP), 33 scopes |
-| A2A Server    | `src/lib/a2a/`          | JSON-RPC 2.0 agent protocol                                                                                                                                               |
-| Skills        | `src/lib/skills/`       | Extensible skill framework                                                                                                                                                |
-| Memory        | `src/lib/memory/`       | Persistent conversational memory                                                                                                                                          |
+| Layer | Location | Purpose |
+| --- | --- | --- |
+| API Routes | `src/app/api/v1/` | Next.js App Router — entry points |
+| Handlers | `open-sse/handlers/` | Request processing (chat, embeddings, etc) |
+| Executors | `open-sse/executors/` | Provider-specific HTTP dispatch |
+| Translators | `open-sse/translator/` | Format conversion (OpenAI↔Claude↔Gemini) |
+| Transformer | `open-sse/transformer/` | Responses API ↔ Chat Completions |
+| Services | `open-sse/services/` | Combo routing, rate limits, caching, etc |
+| Database | `src/lib/db/` | SQLite domain modules (154 migrations) |
+| Domain/Policy | `src/domain/` | Policy engine, cost rules, fallback logic |
+| MCP Server | `open-sse/mcp-server/` | 109 tools (44 canonical + memory/skill/GitHub/pool/gamification/plugin/Notion/Obsidian/local-corpus/RTK modules), 3 transports (stdio / SSE / Streamable HTTP), 33 scopes |
+| A2A Server | `src/lib/a2a/` | JSON-RPC 2.0 agent protocol |
+| Skills | `src/lib/skills/` | Extensible skill framework |
+| Memory | `src/lib/memory/` | Persistent conversational memory |
 
 Monorepo: `src/` (Next.js 16 app), `open-sse/` (streaming engine workspace), `electron/` (desktop app), `tests/`, `bin/` (CLI entry point).
 
@@ -122,10 +122,10 @@ upstream/service level, so one unhealthy provider does not slow down every reque
 side — do not confuse them:
 
 | Profile | `providerFailureThreshold` (whole provider) | `providerCooldownMs` | `circuitBreakerThreshold` (one connection) | `circuitBreakerReset` |
-| ------- | ------------------------------------------: | -------------------: | -----------------------------------------: | --------------------: |
-| OAuth   |                                        `10` |               `5min` |                                        `8` |                 `60s` |
-| API key |                                        `15` |              `10min` |                                       `12` |                 `30s` |
-| Local   |                                         `2` |               `1min` |                                        `2` |                 `15s` |
+| --- | ---: | ---: | ---: | ---: |
+| OAuth | `10` | `5min` | `8` | `60s` |
+| API key | `15` | `10min` | `12` | `30s` |
+| Local | `2` | `1min` | `2` | `15s` |
 
 The provider-level thresholds were scaled up for deployments with 500+ connections (OAuth was
 `3`, API key was `5`); every default is overridable through the `OMNIROUTE_PROVIDER_BREAKER_*`
@@ -236,18 +236,18 @@ connection continue serving other models.
 
 Read the nearest `AGENTS.md` and the linked deep-dive before making a non-trivial change.
 
-| Area                               | Location                                                | Start here                                                                                                                                       |
-| ---------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| API routes                         | `src/app/api/v1/`                                       | [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md)                                                                         |
-| Streaming request handling         | `open-sse/handlers/`                                    | [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md)                                                                         |
-| Provider execution and translation | `open-sse/executors/`, `open-sse/translator/`           | [`docs/architecture/CODEBASE_DOCUMENTATION.md`](docs/architecture/CODEBASE_DOCUMENTATION.md)                                                     |
-| Routing and resilience             | `open-sse/services/`                                    | [`open-sse/services/AGENTS.md`](open-sse/services/AGENTS.md), [`docs/routing/AUTO-COMBO.md`](docs/routing/AUTO-COMBO.md)                         |
-| Database and migrations            | `src/lib/db/`, `db/migrations/`                         | [`src/lib/db/AGENTS.md`](src/lib/db/AGENTS.md)                                                                                                   |
-| Domain policy                      | `src/domain/`                                           | [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md)                                                                         |
-| MCP and A2A                        | `open-sse/mcp-server/`, `src/lib/a2a/`                  | [`docs/frameworks/MCP-SERVER.md`](docs/frameworks/MCP-SERVER.md), [`docs/frameworks/A2A-SERVER.md`](docs/frameworks/A2A-SERVER.md)               |
-| Agent features                     | `src/lib/{acp,memory,skills,cloudAgent}/`               | [`docs/frameworks/AGENT_PROTOCOLS_GUIDE.md`](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md), [`docs/frameworks/SKILLS.md`](docs/frameworks/SKILLS.md) |
-| Safety and governance              | `src/lib/{guardrails,compliance}/`, `src/server/authz/` | [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md), [`docs/architecture/AUTHZ_GUIDE.md`](docs/architecture/AUTHZ_GUIDE.md)             |
-| Operations                         | `src/mitm/`, tunnel modules, `electron/`                | [`docs/ops/TUNNELS_GUIDE.md`](docs/ops/TUNNELS_GUIDE.md), [`docs/guides/ELECTRON_GUIDE.md`](docs/guides/ELECTRON_GUIDE.md)                       |
+| Area | Location | Start here |
+| --- | --- | --- |
+| API routes | `src/app/api/v1/` | [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md) |
+| Streaming request handling | `open-sse/handlers/` | [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md) |
+| Provider execution and translation | `open-sse/executors/`, `open-sse/translator/` | [`docs/architecture/CODEBASE_DOCUMENTATION.md`](docs/architecture/CODEBASE_DOCUMENTATION.md) |
+| Routing and resilience | `open-sse/services/` | [`open-sse/services/AGENTS.md`](open-sse/services/AGENTS.md), [`docs/routing/AUTO-COMBO.md`](docs/routing/AUTO-COMBO.md) |
+| Database and migrations | `src/lib/db/`, `db/migrations/` | [`src/lib/db/AGENTS.md`](src/lib/db/AGENTS.md) |
+| Domain policy | `src/domain/` | [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md) |
+| MCP and A2A | `open-sse/mcp-server/`, `src/lib/a2a/` | [`docs/frameworks/MCP-SERVER.md`](docs/frameworks/MCP-SERVER.md), [`docs/frameworks/A2A-SERVER.md`](docs/frameworks/A2A-SERVER.md) |
+| Agent features | `src/lib/{acp,memory,skills,cloudAgent}/` | [`docs/frameworks/AGENT_PROTOCOLS_GUIDE.md`](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md), [`docs/frameworks/SKILLS.md`](docs/frameworks/SKILLS.md) |
+| Safety and governance | `src/lib/{guardrails,compliance}/`, `src/server/authz/` | [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md), [`docs/architecture/AUTHZ_GUIDE.md`](docs/architecture/AUTHZ_GUIDE.md) |
+| Operations | `src/mitm/`, tunnel modules, `electron/` | [`docs/ops/TUNNELS_GUIDE.md`](docs/ops/TUNNELS_GUIDE.md), [`docs/guides/ELECTRON_GUIDE.md`](docs/guides/ELECTRON_GUIDE.md) |
 
 ---
 
@@ -263,7 +263,7 @@ Read the nearest `AGENTS.md` and the linked deep-dive before making a non-trivia
 - Documentation files (`README.md`, `CHANGELOG.md`, `ROADMAP.md`, `LICENSE`, `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `llm.txt`, `Tuto_Qdrant.md`)
 - CI/CD files and ignore definitions (`.gitignore`, `.dockerignore`, `.npmignore`, `.npmrc`, `.node-version`, `.nvmrc`, `.env.example`)
 
-When creating _any_ validation tests or one-off logic scripts, default to `scripts/ad-hoc/` or `tests/unit/` according to your goals. Do not pollute the `/` root context.
+When creating *any* validation tests or one-off logic scripts, default to `scripts/ad-hoc/` or `tests/unit/` according to your goals. Do not pollute the `/` root context.
 
 - **Root `_*` paths are private and NEVER tracked** (`_tasks/`, `_references/`, `_mono_repo/`,
   `_ideia/`, `_cache/` and any future `_<name>`): they live on disk only, are gitignored by the
@@ -406,52 +406,52 @@ Documentation must describe verified behavior, not plausible behavior.
 
 For any non-trivial change, read the matching deep-dive first:
 
-| Area                                          | Doc                                                     |
-| --------------------------------------------- | ------------------------------------------------------- |
-| Repo navigation                               | `docs/architecture/REPOSITORY_MAP.md`                   |
-| Architecture                                  | `docs/architecture/ARCHITECTURE.md`                     |
-| Engineering reference                         | `docs/architecture/CODEBASE_DOCUMENTATION.md`           |
-| Auto-Combo (14-factor scoring, 19 strategies) | `docs/routing/AUTO-COMBO.md`                            |
-| Resilience (3 mechanisms)                     | `docs/architecture/RESILIENCE_GUIDE.md`                 |
-| Reasoning replay                              | `docs/routing/REASONING_REPLAY.md`                      |
-| Skills framework                              | `docs/frameworks/SKILLS.md`                             |
-| Radar (free-model catalog overlay)            | `docs/frameworks/RADAR.md`                              |
-| Memory system (FTS5 + Qdrant)                 | `docs/frameworks/MEMORY.md`                             |
-| Cloud agents                                  | `docs/frameworks/CLOUD_AGENT.md`                        |
-| Guardrails (PII / injection / vision)         | `docs/security/GUARDRAILS.md`                           |
-| Public upstream credentials (Gemini/etc.)     | `docs/security/PUBLIC_CREDS.md`                         |
-| Error message sanitization                    | `docs/security/ERROR_SANITIZATION.md`                   |
-| Evals                                         | `docs/frameworks/EVALS.md`                              |
-| Compliance / audit                            | `docs/security/COMPLIANCE.md`                           |
-| Webhooks                                      | `docs/frameworks/WEBHOOKS.md`                           |
-| Authorization pipeline                        | `docs/architecture/AUTHZ_GUIDE.md`                      |
-| Stealth (TLS / fingerprint)                   | `docs/security/STEALTH_GUIDE.md`                        |
-| Agent protocols (A2A / ACP / Cloud)           | `docs/frameworks/AGENT_PROTOCOLS_GUIDE.md`              |
-| MCP server                                    | `docs/frameworks/MCP-SERVER.md`                         |
-| A2A server                                    | `docs/frameworks/A2A-SERVER.md`                         |
-| API reference + OpenAPI                       | `docs/reference/API_REFERENCE.md` + `docs/openapi.yaml` |
-| Provider catalog (auto-generated)             | `docs/reference/PROVIDER_REFERENCE.md`                  |
-| Tunnels                                       | `docs/ops/TUNNELS_GUIDE.md`                             |
-| Electron desktop app                          | `docs/guides/ELECTRON_GUIDE.md`                         |
-| VS Code Copilot Chat (OmniCopilot extension)  | `docs/guides/VSCODE-COPILOT.md`                         |
-| Release flow                                  | `docs/ops/RELEASE_CHECKLIST.md`                         |
-| Embedded services                             | `docs/frameworks/EMBEDDED-SERVICES.md`                  |
-| Quality gates (~80 scripts, allowlist policy) | `docs/architecture/QUALITY_GATES.md`                    |
+| Area | Doc |
+| --- | --- |
+| Repo navigation | `docs/architecture/REPOSITORY_MAP.md` |
+| Architecture | `docs/architecture/ARCHITECTURE.md` |
+| Engineering reference | `docs/architecture/CODEBASE_DOCUMENTATION.md` |
+| Auto-Combo (14-factor scoring, 19 strategies) | `docs/routing/AUTO-COMBO.md` |
+| Resilience (3 mechanisms) | `docs/architecture/RESILIENCE_GUIDE.md` |
+| Reasoning replay | `docs/routing/REASONING_REPLAY.md` |
+| Skills framework | `docs/frameworks/SKILLS.md` |
+| Radar (free-model catalog overlay) | `docs/frameworks/RADAR.md` |
+| Memory system (FTS5 + Qdrant) | `docs/frameworks/MEMORY.md` |
+| Cloud agents | `docs/frameworks/CLOUD_AGENT.md` |
+| Guardrails (PII / injection / vision) | `docs/security/GUARDRAILS.md` |
+| Public upstream credentials (Gemini/etc.) | `docs/security/PUBLIC_CREDS.md` |
+| Error message sanitization | `docs/security/ERROR_SANITIZATION.md` |
+| Evals | `docs/frameworks/EVALS.md` |
+| Compliance / audit | `docs/security/COMPLIANCE.md` |
+| Webhooks | `docs/frameworks/WEBHOOKS.md` |
+| Authorization pipeline | `docs/architecture/AUTHZ_GUIDE.md` |
+| Stealth (TLS / fingerprint) | `docs/security/STEALTH_GUIDE.md` |
+| Agent protocols (A2A / ACP / Cloud) | `docs/frameworks/AGENT_PROTOCOLS_GUIDE.md` |
+| MCP server | `docs/frameworks/MCP-SERVER.md` |
+| A2A server | `docs/frameworks/A2A-SERVER.md` |
+| API reference + OpenAPI | `docs/reference/API_REFERENCE.md` + `docs/openapi.yaml` |
+| Provider catalog (auto-generated) | `docs/reference/PROVIDER_REFERENCE.md` |
+| Tunnels | `docs/ops/TUNNELS_GUIDE.md` |
+| Electron desktop app | `docs/guides/ELECTRON_GUIDE.md` |
+| VS Code Copilot Chat (OmniCopilot extension) | `docs/guides/VSCODE-COPILOT.md` |
+| Release flow | `docs/ops/RELEASE_CHECKLIST.md` |
+| Embedded services | `docs/frameworks/EMBEDDED-SERVICES.md` |
+| Quality gates (\~80 scripts, allowlist policy) | `docs/architecture/QUALITY_GATES.md` |
 
 ---
 
 ## Testing
 
-| What                    | Command                                                                       |
-| ----------------------- | ----------------------------------------------------------------------------- |
-| Unit tests              | `npm run test:unit`                                                           |
-| Single file             | `node --import tsx/esm --test tests/unit/your-file.test.ts`                   |
-| Vitest (MCP, autoCombo) | `npm run test:vitest`                                                         |
-| E2E (Playwright)        | `npm run test:e2e`                                                            |
-| Protocol E2E (MCP+A2A)  | `npm run test:protocols:e2e` (CI job `test-protocols-e2e`, advisory — #10049) |
-| Ecosystem               | `npm run test:ecosystem` (CI job `test-ecosystem`, blocking)                  |
-| Coverage gate           | `npm run test:coverage` (60/60/60/60 — statements/lines/functions/branches)   |
-| Coverage report         | `npm run coverage:report`                                                     |
+| What | Command |
+| --- | --- |
+| Unit tests | `npm run test:unit` |
+| Single file | `node --import tsx/esm --test tests/unit/your-file.test.ts` |
+| Vitest (MCP, autoCombo) | `npm run test:vitest` |
+| E2E (Playwright) | `npm run test:e2e` |
+| Protocol E2E (MCP+A2A) | `npm run test:protocols:e2e` (CI job `test-protocols-e2e`, advisory — #10049) |
+| Ecosystem | `npm run test:ecosystem` (CI job `test-ecosystem`, blocking) |
+| Coverage gate | `npm run test:coverage` (60/60/60/60 — statements/lines/functions/branches) |
+| Coverage report | `npm run coverage:report` |
 
 **PR rule**: If you change production code in `src/`, `open-sse/`, `electron/`, or `bin/`, you must include or update tests in the same PR.
 
@@ -496,12 +496,12 @@ repo** instead of polluting the main OmniRoute tree.
 Whenever any plan/spec/research generator runs in this project (superpowers or otherwise),
 save to `_tasks/` using the filename convention:
 
-| Artifact       | Save here                                                     |
-| -------------- | ------------------------------------------------------------- |
-| Plans          | `_tasks/superpowers/plans/YYYY-MM-DD-<feature>.md`            |
-| Specs / design | `_tasks/superpowers/specs/YYYY-MM-DD-<topic>-design.md`       |
-| Research       | `_tasks/research/…`                                           |
-| Hand-offs      | `_tasks/hands-off/<YYYY-MM-DD>_<branch>_v<versão>_sess-<id>/` |
+| Artifact | Save here |
+| --- | --- |
+| Plans | `_tasks/superpowers/plans/YYYY-MM-DD-<feature>.md` |
+| Specs / design | `_tasks/superpowers/specs/YYYY-MM-DD-<topic>-design.md` |
+| Research | `_tasks/research/…` |
+| Hand-offs | `_tasks/hands-off/<YYYY-MM-DD>_<branch>_v<versão>_sess-<id>/` |
 
 Commit those artifacts inside the `_tasks/` repo (`git -C _tasks …`), never in the main repo.
 
@@ -549,8 +549,8 @@ own dedicated branch, and you MUST confirm the base branch with the operator bef
    `include: **/*` globs ~70× the codebase → OOM; incident 2026-06-25) and (b) scatters
    worktrees across two dirs.
 
-   ```bash
-   BASE_BRANCH="release/vX.Y.Z"          # ← the branch the operator confirmed in step 1
+```bash
+  BASE_BRANCH="release/vX.Y.Z"          # ← the branch the operator confirmed in step 1
    TASK="feat/your-feature"               # feat/ fix/ refactor/ docs/ test/ chore/
    git fetch origin "$BASE_BRANCH"
    git worktree add ".claude/worktrees/${TASK##*/}" -b "$TASK" "origin/$BASE_BRANCH"
@@ -559,7 +559,7 @@ own dedicated branch, and you MUST confirm the base branch with the operator bef
    # HARD LINKS (`cp -al`), never a symlink: ~5s for the whole tree and near-zero extra
    # disk (the inodes are shared), and unlike a symlink it does not break the dev server.
    cp -al "$(git -C <main_checkout> rev-parse --show-toplevel)/node_modules" node_modules
-   ```
+```
 
    **Never `ln -s` node_modules.** Turbopack rejects a symlink that resolves outside the
    project root, so `npm run dev` dies with a FATAL panic (`Symlink [project]/node_modules
@@ -603,7 +603,7 @@ automation changes out of upstream PRs.
 
 Start upstream work from the active upstream default branch, not `main`:
 
-```bash
+```
 git fetch upstream
 git switch -c <branch-name> upstream/<default-branch>
 ```
@@ -675,10 +675,10 @@ the stale-enforcement added in Fase 6A.3.
 18. Every bug fix must be validated before shipping: a failing-then-passing unit/integration test (TDD) OR a documented live test on the production VPS (192.168.0.15). A fix without either is not merged. See Testing → "Bug fix / issue triage protocol" for the full decision tree.
 19. Never develop on the shared main checkout. Every development task runs in its own git worktree on its own dedicated branch, and you MUST confirm the base branch with the operator before creating the worktree/branch — never assume `main` or the currently checked-out branch. A `git checkout` in the shared checkout silently destroys other sessions' uncommitted work. Tear down only the worktrees/branches you created (by name, never `fix/*`/`feat/*` wildcards), leave other sessions' worktrees untouched, and end on the branch you started on (the active `release/vX.Y.Z`, never `main`). See Git Workflow → "Worktree isolation".
 20. PII redaction/sanitization is **opt-in — never on by default**. OmniRoute proxies for self-hosted/local LLMs where the operator owns the data, so mutating request/response payloads by default would silently corrupt legitimate traffic. The two data-mutating PII feature flags **MUST** keep `defaultValue: "false"` in `src/shared/constants/featureFlagDefinitions.ts`: `PII_REDACTION_ENABLED` (request-side) and `PII_RESPONSE_SANITIZATION` (response + streaming). All three application points — `src/lib/guardrails/piiMasker.ts` (request guardrail), `src/lib/piiSanitizer.ts` (response), `src/lib/streamingPiiTransform.ts` (SSE) — are gated on these flags; with both off the `pii-masker` guardrail still runs but never mutates payloads (data passes through untouched). Flipping either default to `"true"` requires explicit operator approval. The regression guard is `tests/unit/pii-opt-in-default.test.ts` (asserts both definition defaults + behavioral pass-through). Opt-in is per-operator via env or the settings/DB override (`src/lib/db/featureFlags.ts`), never a silent default. See `docs/security/GUARDRAILS.md`.
-21. **Release-freeze — the FROZEN release branch belongs to the release captain; development does NOT stop (parallel-cycle model, 2026-07-04).** `/generate-release` opens a marker issue labeled `release-freeze` at the start of reconciliation (Phase 0a), **immediately cuts the next cycle's branch `release/vX+1` from the frozen tip (Phase 0a.0b — bump + living release PR + re-home of open PRs)**, and closes the freeze once the release PR squash-merges to `main`. Before merging **any** PR, every campaign workflow (`/review-prs`, `/review-group-prs`, `/merge-prs`, `/triage-fix-bugs`, `/implement-fix-bugs`, `/triage-features`, `/implement-features`, `/green-prs`, `/port-upstream-*`) **MUST** check `gh issue list --repo diegosouzapw/OmniRoute --label release-freeze --state open` — if a freeze is active: **NEVER merge into the frozen `release/vX.Y.Z` named in the freeze title**; instead resolve the ACTIVE development branch (the **highest** `release/v*` by semver — normally `release/vX+1`, announced in a freeze-issue comment) and **retarget the PR there** (`gh pr edit <N> --base release/vX+1`, then VERIFY with `gh pr view <N> --json baseRefName` — the edit fails silently) and merge normally. **HOLD only when the highest release/v\* branch IS the frozen one** (the short window before 0a.0b completes, or a pre-parallel-cycle release) — in that case leave the PR ready and open, tell the operator, and resume when the next branch appears or the freeze lifts. The just-shipped fixes reach `release/vX+1` via the Phase 5 sync-back (`scripts/release/sync-next-cycle.mjs`); do not try to sync mid-release. This is a **coordination signal, not a permission lock**: the release captain and the campaign sessions share the `diegosouzapw` identity, so a GitHub branch-protection lock cannot distinguish them — only this honored marker prevents the mid-release commit races that forced full CHANGELOG re-reconciliation in v3.8.40/v3.8.41 (a parallel campaign advanced `release/vX.Y.Z` by 34 commits mid-run). The release captain's own reconciliation/cycle-open pushes are exempt — they _are_ the release. Fixes that must land during a freeze (a homologation finding) follow the post-merge read-only rule: land on `main` first via `fix/release-vX.Y.Z-*`. **⛔ ONLY `/generate-release` may raise a release-freeze, and ONLY at its Phase 0a (start of generating a new version) — lifted at Phase 12c after the squash-merge to `main`.** No campaign, session, or agent may open a `release-freeze` marker at any other time — a freeze is **never** a mid-development coordination tool. If a session ever believes a freeze is genuinely, unavoidably necessary outside the `/generate-release` flow, it **MUST first ask the operator (`diegosouzapw`) in chat, explicitly alert "estou criando um freeze" and get an explicit yes** — never open, extend, or re-open a `release-freeze` autonomously. Conversely, do **not** close/lift an active `/generate-release` freeze to unblock campaign merges: it protects the captain's single clean CI run and auto-lifts at Phase 12c — closing it early re-triggers the exact commit race it prevents. Verify a freeze is legitimate before acting on it: an open `release-freeze` whose title/body references an **OPEN** release PR (`gh pr view <N> --json state`) is the authorized captain freeze — hold, don't touch. (Cycle-model proposal: `_tasks/finished/release-flow/2026-07-04_proposta-ciclo-paralelo-v2.md`.)
+21. **Release-freeze — the FROZEN release branch belongs to the release captain; development does NOT stop (parallel-cycle model, 2026-07-04).** `/generate-release` opens a marker issue labeled `release-freeze` at the start of reconciliation (Phase 0a), **immediately cuts the next cycle's branch `release/vX+1` from the frozen tip (Phase 0a.0b — bump + living release PR + re-home of open PRs)**, and closes the freeze once the release PR squash-merges to `main`. Before merging **any** PR, every campaign workflow (`/review-prs`, `/review-group-prs`, `/merge-prs`, `/triage-fix-bugs`, `/implement-fix-bugs`, `/triage-features`, `/implement-features`, `/green-prs`, `/port-upstream-*`) **MUST** check `gh issue list --repo diegosouzapw/OmniRoute --label release-freeze --state open` — if a freeze is active: **NEVER merge into the frozen `release/vX.Y.Z` named in the freeze title**; instead resolve the ACTIVE development branch (the **highest** `release/v*` by semver — normally `release/vX+1`, announced in a freeze-issue comment) and **retarget the PR there** (`gh pr edit <N> --base release/vX+1`, then VERIFY with `gh pr view <N> --json baseRefName` — the edit fails silently) and merge normally. **HOLD only when the highest release/v\* branch IS the frozen one** (the short window before 0a.0b completes, or a pre-parallel-cycle release) — in that case leave the PR ready and open, tell the operator, and resume when the next branch appears or the freeze lifts. The just-shipped fixes reach `release/vX+1` via the Phase 5 sync-back (`scripts/release/sync-next-cycle.mjs`); do not try to sync mid-release. This is a **coordination signal, not a permission lock**: the release captain and the campaign sessions share the `diegosouzapw` identity, so a GitHub branch-protection lock cannot distinguish them — only this honored marker prevents the mid-release commit races that forced full CHANGELOG re-reconciliation in v3.8.40/v3.8.41 (a parallel campaign advanced `release/vX.Y.Z` by 34 commits mid-run). The release captain's own reconciliation/cycle-open pushes are exempt — they *are* the release. Fixes that must land during a freeze (a homologation finding) follow the post-merge read-only rule: land on `main` first via `fix/release-vX.Y.Z-*`. **⛔ ONLY `/generate-release` may raise a release-freeze, and ONLY at its Phase 0a (start of generating a new version) — lifted at Phase 12c after the squash-merge to `main`.** No campaign, session, or agent may open a `release-freeze` marker at any other time — a freeze is **never** a mid-development coordination tool. If a session ever believes a freeze is genuinely, unavoidably necessary outside the `/generate-release` flow, it **MUST first ask the operator (`diegosouzapw`) in chat, explicitly alert "estou criando um freeze" and get an explicit yes** — never open, extend, or re-open a `release-freeze` autonomously. Conversely, do **not** close/lift an active `/generate-release` freeze to unblock campaign merges: it protects the captain's single clean CI run and auto-lifts at Phase 12c — closing it early re-triggers the exact commit race it prevents. Verify a freeze is legitimate before acting on it: an open `release-freeze` whose title/body references an **OPEN** release PR (`gh pr view <N> --json state`) is the authorized captain freeze — hold, don't touch. (Cycle-model proposal: `_tasks/finished/release-flow/2026-07-04_proposta-ciclo-paralelo-v2.md`.)
 22. **Cross-session safety — this repo is worked by MANY parallel sessions/agents at once; never step on another's in-flight work.** Two absolute bans, both recurring incidents (this rule exists because they keep happening):
     - **(a) Never `git stash` / `git stash pop` — ANYWHERE in this repo, including inside an isolated worktree, and including inside any subagent you dispatch.** `git stash` operates on the **shared repository object store**, not the per-worktree working tree — so a stash pushed or popped in one session can silently clobber or resurrect another parallel session's uncommitted changes. This is not hypothetical: 2026-07-02 a `#5923` quotaCache change leaked into the unrelated `#2296` worktree via a global `stash pop`, and the same class reincided through a **subagent**. To compare working changes against a base ref **without** stashing, use `git show <ref>:<path>` or `git diff <ref> -- <path>`; to confirm a typecheck/lint error is pre-existing on the base, inspect the base ref directly (`git show origin/release/vX.Y.Z:<path>`) — never stash your tree away to "get it clean". **Put this ban verbatim in the prompt of every subagent that touches git** (agents don't inherit this file's context — the recurrence was a subagent).
-    - **(b) Never merge, push, rebase, or force-push a PR / branch / worktree that another session is actively working.** An open PR whose head is a live fix worktree in `.claude/worktrees/` you did **not** create (e.g. `fix-5852`/`fix-5923` carrying fresh commits, even when they share your `diegosouzapw` identity), or any branch another session owns, is **off-limits — HOLD**, and let the owning session merge it. **Before** merging or pushing to any PR you did not create _this_ session, run `git worktree list` to check for a matching in-flight worktree and re-check `gh pr view <N> --json state,headRefOid`. Only the owning session merges its own in-flight PR; mid-flight merges race the owner and re-trigger the exact commit/CHANGELOG races Rule #19 and Rule #21 guard against. (Reinforces Rule #19.)
+    - **(b) Never merge, push, rebase, or force-push a PR / branch / worktree that another session is actively working.** An open PR whose head is a live fix worktree in `.claude/worktrees/` you did **not** create (e.g. `fix-5852`/`fix-5923` carrying fresh commits, even when they share your `diegosouzapw` identity), or any branch another session owns, is **off-limits — HOLD**, and let the owning session merge it. **Before** merging or pushing to any PR you did not create *this* session, run `git worktree list` to check for a matching in-flight worktree and re-check `gh pr view <N> --json state,headRefOid`. Only the owning session merges its own in-flight PR; mid-flight merges race the owner and re-trigger the exact commit/CHANGELOG races Rule #19 and Rule #21 guard against. (Reinforces Rule #19.)
 23. **`_tasks/` é INTOCÁVEL como estrutura — append/edit-only.** É um repositório git SEPARADO
     (remote privado `diegosouzapw/_tasks_omniroute`) montado como diretório real na raiz do
     checkout principal. Regras absolutas: (a) NUNCA mover, renomear, deletar, esvaziar ou
